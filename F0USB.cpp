@@ -60,7 +60,7 @@ namespace F072
 	  constexpr uint32_t L1REQPos = 7U;
 	  constexpr uint32_t DIRPos = 4U;
 	  constexpr uint32_t EP_IDPos = 0U;
-	  constexpr uint32_t EP_ISMask = 0x0FU;
+	  constexpr uint32_t EP_IDMask = 0x0FU;
   }
   
   namespace Endpoint 
@@ -223,8 +223,7 @@ namespace F072
 	}
 	
   }
-  
-  
+    
   namespace Control
   {	  
 	  namespace CNTR
@@ -380,8 +379,8 @@ namespace F072
 namespace
 {
 	F0USB *instance;
+	uint8_t usbRxBuffer[1024];
 }
-
 
 F0USB::F0USB()
 {
@@ -414,7 +413,6 @@ void F0USB::Interrupt()
 	if((F072::USBRegisters->ISTR & (1 << F072::ISTR::CTRPos)) == (1 << F072::ISTR::CTRPos))
 	{
 		CorrectTransferIRQ();
-//		F072::USBRegisters->ISTR = 0xFFFF & ~(1 << F072::ISTR::CTRPos);
 	}
 }
 
@@ -435,16 +433,21 @@ void F0USB::ResetIRQ()
 	F072::USBRegisters->BCDR = (1 << 15); //enable pull up	
 }
 
-uint8_t rxData[64];
-
 void F0USB::CorrectTransferIRQ()
 {
-	uint8_t *memory = reinterpret_cast<uint8_t *>(0x40U + 0x40006000);
-	for(int i = 0; i < 64; i++)
+	const uint8_t hardwareEndpoint = static_cast<uint8_t>(F072::USBRegisters->ISTR & F072::ISTR::EP_IDMask);
+	if((F072::USBEndpointRegisters->EPxR[hardwareEndpoint] & (1 << F072::Endpoint::USBEPxR::CTR_RXPos)) == (1 << F072::Endpoint::USBEPxR::CTR_RXPos))
 	{
-		rxData[i] = memory[i];
+		const uint16_t bytesReceived = F072::BufferDescriptor::DescriptorTable->Endpoint[hardwareEndpoint].COUNT_RX & 0x01FFU;
+		uint8_t volatile * const packetMemory = reinterpret_cast<uint8_t *>(F072::BufferDescriptor::DescriptorTable->Endpoint[hardwareEndpoint].ADDR_RX + 0x40006000U);
+		
+		for(uint32_t i = 0; i < bytesReceived; i++)
+		{
+			usbRxBuffer[i] = packetMemory[i];
+		}
+		
+		F072::Endpoint::ClearCorrectReceptionTransfer(hardwareEndpoint);
 	}
-	
 }
 
 extern "C" void USB_IRQHandler()
