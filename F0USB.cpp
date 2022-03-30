@@ -1,5 +1,6 @@
 #include "F0USB.h"
 #include <stdint.h>
+#include <algorithm>
 
 enum class EPTxState {
 	Disabled,
@@ -15,18 +16,12 @@ enum class EPRxState {
 	Valid
 };
 
-enum class EPType {
-	Bulk,
-	Control,
-	Isochronous,
-	Interrupt
-};
+
 
 namespace F072 
 {
   constexpr uint32_t USBBaseAddress = 0x40005C00U;
   constexpr uint32_t CommonRegistersOffset = 0x40U;
-  constexpr uint32_t ISTROffset = 0x44U;
   
   __packed struct CommonRegisters
   {
@@ -357,6 +352,18 @@ namespace F072
    
   namespace BufferDescriptor
   {
+	  constexpr uint16_t TotalPacketMemoryLength = 1024U;
+	  constexpr uint16_t EndpointDescriptorTableLength = 64U;
+	  constexpr uint16_t Ep0DataLength = 64U;
+	  
+	  namespace COUNT_RX
+	  {
+		  constexpr uint16_t BL_SIZEPos = 15U;
+		  constexpr uint16_t NUM_BLOCKPos = 10U;
+		  constexpr uint16_t NUM_BLOCKMask = 0x1FU << NUM_BLOCKPos;
+	  }
+	  uint16_t NextFreeBufferOffset = EndpointDescriptorTableLength + (2 * Ep0DataLength);
+
 	  __packed struct EndpointDescriptor
 	  {
 		  volatile uint16_t ADDR_TX;
@@ -373,6 +380,42 @@ namespace F072
 	  static_assert(sizeof(EndpointDescriptor) == 8, "Endpoint descriptor size!");
 	  
 	  Table volatile * const DescriptorTable = reinterpret_cast<Table *>(0x40006000);
+
+	  bool AllocateEndpointBuffer(uint8_t endpoint, uint16_t size)
+	  {
+		if(TotalPacketMemoryLength - NextFreeBufferOffset < size)
+			return false;
+		
+		const bool isInEndpoint = 0x80 == (endpoint & 0x80);
+		const uint8_t maskedEndpoint = (endpoint & 0x7F); //remove direction bit
+
+		uint16_t address = NextFreeBufferOffset;
+		NextFreeBufferOffset += size;
+
+		if(isInEndpoint)
+		{
+			DescriptorTable->Endpoint[endpoint].ADDR_TX = address;
+		}
+		else
+		{
+			DescriptorTable->Endpoint[endpoint].ADDR_RX = address;
+			if(size > 62U)
+			{
+				uint16_t numberOfBlocks = (size / 32) - 1;
+				numberOfBlocks <<= COUNT_RX::NUM_BLOCKPos;
+				numberOfBlocks &= COUNT_RX::NUM_BLOCKMask;
+				numberOfBlocks |= (1 << COUNT_RX::BL_SIZEPos);
+				DescriptorTable->Endpoint[endpoint].COUNT_RX = numberOfBlocks;
+			}
+			else
+			{
+				uint16_t numberOfBlocks = (size / 2);
+				numberOfBlocks <<= COUNT_RX::NUM_BLOCKPos;
+				numberOfBlocks &= COUNT_RX::NUM_BLOCKMask;
+				DescriptorTable->Endpoint[endpoint].COUNT_RX = numberOfBlocks;
+			}
+		}
+	  }
   }
 }
 
@@ -400,6 +443,41 @@ void F0USB::InitialiseHardware()
 	F072::Control::EnableInterrupt(F072::Control::Interrupt::Reset);
 	
 	F072::Control::ClearReset();
+}
+
+void F0USB::RegisterEndpoint(uint8_t endpointNumber, EPType type, uint16_t inSize, uint16_t outSize, uint8_t *outRxBuffer)
+{
+	const uint8_t maskedEndpoint = endpointNumber & 0x7FU; //remove direction bit
+	
+	mEndpoints[maskedEndpoint].inSize = inSize;
+	mEndpoints[maskedEndpoint].outSize = outSize;
+	mEndpoints[maskedEndpoint].outRxBuffer = outRxBuffer;
+	
+	if(EPType::Isochronous == type)
+	{  //isoc endpoints are always double buffered
+		if(inSize > 0U && outSize > 0U)
+		{
+			asm("BKPT 0"); //can't handle this configuration in hardware
+		}
+		
+		const uint16_t size = std::max<uint16_t>(inSize, outSize);
+		F072::BufferDescriptor::AllocateEndpointBuffer(maskedEndpoint | 0x80, size);
+		F072::BufferDescriptor::AllocateEndpointBuffer(maskedEndpoint, size);
+	}
+	else
+	{
+		if(inSize > 0U)
+		{
+			F072::BufferDescriptor::AllocateEndpointBuffer(maskedEndpoint | 0x80, inSize);
+		}
+		
+		if(outSize > 0U)
+		{
+			F072::BufferDescriptor::AllocateEndpointBuffer(maskedEndpoint, outSize);
+		}	
+	}
+	
+	F072::Endpoint::SetEPType(maskedEndpoint, type);
 }
 
 void F0USB::Interrupt()
