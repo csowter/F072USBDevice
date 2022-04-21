@@ -1,7 +1,7 @@
 #ifndef setuppacket_h_
 #define setuppacket_h_
 
-#include <cstdint>
+#include <stdint.h>
 
 namespace StandardRequestCodes
 {

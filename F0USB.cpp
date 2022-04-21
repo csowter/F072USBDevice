@@ -1,6 +1,7 @@
 #include "F0USB.h"
 #include <stdint.h>
 #include <algorithm>
+#include "USBDevice.h"
 
 enum class EPTxState {
 	Disabled,
@@ -427,8 +428,13 @@ namespace
 
 F0USB::F0USB()
 {
-	InitialiseHardware();
 	instance = this;
+}
+
+void F0USB::RegisterDevice(USBDevice *device)
+{
+	mDevice = device;
+	InitialiseHardware();
 }
 
 void F0USB::InitialiseHardware()
@@ -518,14 +524,36 @@ void F0USB::CorrectTransferIRQ()
 	{
 		const uint16_t bytesReceived = F072::BufferDescriptor::DescriptorTable->Endpoint[hardwareEndpoint].COUNT_RX & 0x01FFU;
 		uint8_t volatile * const packetMemory = reinterpret_cast<uint8_t *>(F072::BufferDescriptor::DescriptorTable->Endpoint[hardwareEndpoint].ADDR_RX + 0x40006000U);
-		
+		uint8_t *userMemory = mEndpoints[hardwareEndpoint].outRxBuffer;
 		for(uint32_t i = 0; i < bytesReceived; i++)
 		{
-			usbRxBuffer[i] = packetMemory[i];
+			userMemory[i] = packetMemory[i];
+		}
+
+		if(0U == hardwareEndpoint)
+		{
+			mDevice->EP0Out(bytesReceived);
+		}
+		else
+		{
+			mDevice->DataOut(hardwareEndpoint, bytesReceived);
 		}
 		
 		F072::Endpoint::ClearCorrectReceptionTransfer(hardwareEndpoint);
+		F072::Endpoint::SetRxState(hardwareEndpoint, EPRxState::Valid);
 	}
+}
+
+void F0USB::TxData(uint8_t endpointNumber, const uint8_t *data, uint16_t length)
+{
+	uint16_t * volatile packetMemory = reinterpret_cast<uint16_t *>(F072::BufferDescriptor::DescriptorTable->Endpoint[endpointNumber].ADDR_TX + 0x40006000U);
+	for(uint32_t i = 0; i < length; i += 2)
+	{
+		uint16_t halfWord = data[i] | (data[i + 1] << 8);
+		packetMemory[i/2] = halfWord;
+	}
+	F072::BufferDescriptor::DescriptorTable->Endpoint[endpointNumber].COUNT_TX = length;
+	F072::Endpoint::SetTxState(0, EPTxState::Valid);
 }
 
 extern "C" void USB_IRQHandler()
