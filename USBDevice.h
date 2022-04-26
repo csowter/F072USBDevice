@@ -7,6 +7,13 @@
 
 class USBDevice
 {
+	struct InTransaction 
+	{
+		const uint8_t *mData{nullptr};
+		uint16_t mLength{0U};
+		uint16_t mPosition{0U};
+	};
+	
 public:
 	USBDevice() = delete;
     USBDevice(F0USB &usb);
@@ -31,6 +38,8 @@ public:
 
 private:
 	F0USB &mUSB;
+	SetupPacket mLastRxSetupPacket;
+	InTransaction mEP0InTransaction;
 };
 
 #endif

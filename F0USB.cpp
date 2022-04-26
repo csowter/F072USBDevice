@@ -542,6 +542,19 @@ void F0USB::CorrectTransferIRQ()
 		F072::Endpoint::ClearCorrectReceptionTransfer(hardwareEndpoint);
 		F072::Endpoint::SetRxState(hardwareEndpoint, EPRxState::Valid);
 	}
+	
+	if((F072::USBEndpointRegisters->EPxR[hardwareEndpoint] & (1 << F072::Endpoint::USBEPxR::CTR_TXPos)) == (1 << F072::Endpoint::USBEPxR::CTR_TXPos))
+	{
+		if(0U == hardwareEndpoint)
+		{
+			mDevice->EP0In();
+		}
+		else{
+			mDevice->DataIn(hardwareEndpoint);
+		}
+		
+		F072::Endpoint::ClearCorrectTransmissionTransfer(hardwareEndpoint);
+	}
 }
 
 void F0USB::TxData(uint8_t endpointNumber, const uint8_t *data, uint16_t length)
@@ -553,7 +566,12 @@ void F0USB::TxData(uint8_t endpointNumber, const uint8_t *data, uint16_t length)
 		packetMemory[i/2] = halfWord;
 	}
 	F072::BufferDescriptor::DescriptorTable->Endpoint[endpointNumber].COUNT_TX = length;
-	F072::Endpoint::SetTxState(0, EPTxState::Valid);
+	F072::Endpoint::SetTxState(endpointNumber, EPTxState::Valid);
+}
+
+void F0USB::SetDeviceAddress(uint8_t address)
+{
+	F072::USBRegisters->DADDR |= address;
 }
 
 extern "C" void USB_IRQHandler()

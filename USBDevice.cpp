@@ -14,6 +14,7 @@ USBDevice::USBDevice(F0USB &usb)
 
 void USBDevice::SetupPacketRx(const SetupPacket &setupPacket)
 {
+	mLastRxSetupPacket = setupPacket;
     switch(setupPacket.bRequest)
     {
         case StandardRequestCodes::GET_STATUS:
@@ -23,13 +24,28 @@ void USBDevice::SetupPacketRx(const SetupPacket &setupPacket)
 		case StandardRequestCodes::SET_FEATURE:
 			break;
 		case StandardRequestCodes::SET_ADDRESS:
+			mUSB.TxData(0, nullptr, 0);
+		
 			break;
 		case StandardRequestCodes::GET_DESCRIPTOR:
+			if(((setupPacket.wValue & 0xFF00) >> 8U) == DescriptorTypes::DEVICE)
 			{
-			uint16_t descriptorLength;
-			uint8_t *deviceDesc = GetDeviceDescriptor(&descriptorLength);
-			mUSB.TxData(0, deviceDesc, descriptorLength);
-			}				
+				uint16_t descriptorLength;
+				uint8_t *deviceDesc = GetDeviceDescriptor(&descriptorLength);
+				mUSB.TxData(0, deviceDesc, descriptorLength);
+			}
+			else if(((setupPacket.wValue & 0xFF00) >> 8U) == DescriptorTypes::CONFIGURATION)
+			{
+				mEP0InTransaction.mData = GetConfigurationDescriptor(&mEP0InTransaction.mLength);
+				if(mEP0InTransaction.mLength > 64U)
+				{
+					mUSB.TxData(0, mEP0InTransaction.mData, 64U);
+					mEP0InTransaction.mPosition = 64U;
+				} else {
+					mUSB.TxData(0, mEP0InTransaction.mData, mEP0InTransaction.mLength);
+					mEP0InTransaction.mPosition = mEP0InTransaction.mLength;
+				}
+			}
 			break;
 		case StandardRequestCodes::SET_DESCRIPTOR:
 			break;
@@ -52,7 +68,23 @@ void USBDevice::SetupPacketRx(const SetupPacket &setupPacket)
 
 void USBDevice::EP0In()
 {
-
+	if(StandardRequestCodes::SET_ADDRESS == mLastRxSetupPacket.bRequest)
+	{
+		mUSB.SetDeviceAddress(static_cast<uint8_t>(mLastRxSetupPacket.wValue));
+	}
+	
+	if(mEP0InTransaction.mPosition != mEP0InTransaction.mLength)
+	{ //more to send
+		if((mEP0InTransaction.mLength - mEP0InTransaction.mPosition) > 64U)
+		{
+			mUSB.TxData(0, &mEP0InTransaction.mData[mEP0InTransaction.mPosition], 64U);
+			mEP0InTransaction.mPosition += 64U;
+		} else {
+			uint32_t thisTxLength = mEP0InTransaction.mLength - mEP0InTransaction.mPosition;
+			mUSB.TxData(0, &mEP0InTransaction.mData[mEP0InTransaction.mPosition], thisTxLength);
+			mEP0InTransaction.mPosition += thisTxLength;
+		}
+	}
 }
 
 void USBDevice::EP0Out(uint16_t byteCount)
