@@ -17,10 +17,213 @@ enum class EPRxState {
 	Valid
 };
 
-
-
 namespace F072 
 {
+	namespace Registers
+	{
+		namespace CNTR 
+		{
+			namespace Position
+			{
+				constexpr uint32_t CTRM     = 15UL;
+				constexpr uint32_t PMAOVRM  = 14UL;
+				constexpr uint32_t ERRM     = 13UL;
+				constexpr uint32_t WKUPM    = 12UL;
+				constexpr uint32_t SUSPM    = 11UL;
+				constexpr uint32_t RESETM   = 10UL;
+				constexpr uint32_t SOFM     = 9UL;
+				constexpr uint32_t ESOFM    = 8UL;
+				constexpr uint32_t L1REQM   = 7UL;
+				constexpr uint32_t L1RESUME = 5UL;
+				constexpr uint32_t RESUME   = 4UL;
+				constexpr uint32_t FSUSP    = 3UL;
+				constexpr uint32_t LP_MODE  = 2UL;
+				constexpr uint32_t PDWN     = 1UL;
+				constexpr uint32_t FRES     = 0UL;
+			}
+
+			namespace Mask
+			{
+				[[maybe_unused]] constexpr uint32_t CTRM     = (1UL << Position::CTRM);
+				[[maybe_unused]] constexpr uint32_t PMAOVRM  = (1UL << Position::PMAOVRM);
+				[[maybe_unused]] constexpr uint32_t ERRM     = (1UL << Position::ERRM);
+				[[maybe_unused]] constexpr uint32_t WKUPM    = (1UL << Position::WKUPM);
+				[[maybe_unused]] constexpr uint32_t SUSPM    = (1UL << Position::SUSPM);
+				[[maybe_unused]] constexpr uint32_t RESETM   = (1UL << Position::RESETM);
+				[[maybe_unused]] constexpr uint32_t SOFM     = (1UL << Position::SOFM);
+				[[maybe_unused]] constexpr uint32_t ESOFM    = (1UL << Position::ESOFM);
+				[[maybe_unused]] constexpr uint32_t L1REQM   = (1UL << Position::L1REQM);
+				[[maybe_unused]] constexpr uint32_t L1RESUME = (1UL << Position::L1RESUME);
+				[[maybe_unused]] constexpr uint32_t RESUME   = (1UL << Position::RESUME);
+				[[maybe_unused]] constexpr uint32_t FSUSP    = (1UL << Position::FSUSP);
+				[[maybe_unused]] constexpr uint32_t LP_MODE  = (1UL << Position::LP_MODE);
+				[[maybe_unused]] constexpr uint32_t PDWN     = (1UL << Position::PDWN);
+				[[maybe_unused]] constexpr uint32_t FRES     = (1UL << Position::FRES);
+			}
+		}
+
+		namespace ISTR
+		{
+			namespace Position
+			{
+				constexpr uint32_t CTR    = 15UL;
+				constexpr uint32_t PMAOVR = 14UL;
+				constexpr uint32_t ERR    = 13UL;
+				constexpr uint32_t WKUP   = 12UL;
+				constexpr uint32_t SUSP   = 11UL;
+				constexpr uint32_t RESET  = 10UL;
+				constexpr uint32_t SOF    = 9UL;
+				constexpr uint32_t ESOF   = 8UL;
+				constexpr uint32_t L1REQ  = 7UL;
+				constexpr uint32_t DIR    = 4UL;
+				constexpr uint32_t EP_ID  = 0UL;
+			}
+
+			namespace Mask 
+			{
+				[[maybe_unused]] constexpr uint32_t CTR    = (1UL << Position::CTR);
+				[[maybe_unused]] constexpr uint32_t PMAOVR = (1UL << Position::PMAOVR);
+				[[maybe_unused]] constexpr uint32_t ERR    = (1UL << Position::ERR);
+				[[maybe_unused]] constexpr uint32_t WKUP   = (1UL << Position::WKUP);
+				[[maybe_unused]] constexpr uint32_t SUSP   = (1UL << Position::SUSP);
+				[[maybe_unused]] constexpr uint32_t RESET  = (1UL << Position::RESET);
+				[[maybe_unused]] constexpr uint32_t SOF    = (1UL << Position::SOF);
+				[[maybe_unused]] constexpr uint32_t ESOF   = (1UL << Position::ESOF);
+				[[maybe_unused]] constexpr uint32_t L1REQ  = (1UL << Position::L1REQ);
+				[[maybe_unused]] constexpr uint32_t DIR    = (1UL << Position::DIR);
+				[[maybe_unused]] constexpr uint32_t EP_ID  = (0x0FUL << Position::EP_ID);
+			}
+		}
+
+		namespace FNR
+		{
+			namespace Position
+			{
+				constexpr uint32_t RXDP = 15UL;
+				constexpr uint32_t RXDM = 14UL;
+				constexpr uint32_t LCK  = 13UL;
+				constexpr uint32_t LSOF = 11UL;
+				constexpr uint32_t FN   = 0UL;
+			}
+
+			namespace Mask
+			{
+				[[maybe_unused]] constexpr uint32_t RXDP = (1UL << Position::RXDP);
+				[[maybe_unused]] constexpr uint32_t RXDM = (1UL << Position::RXDM);
+				[[maybe_unused]] constexpr uint32_t LCK  = (1UL << Position::LCK);
+				[[maybe_unused]] constexpr uint32_t LSOF = (3UL << Position::LSOF);
+				[[maybe_unused]] constexpr uint32_t FN   = (0x7FF << Position::FN);
+			}
+		}
+
+		namespace DADDR
+		{
+			namespace Position
+			{
+				constexpr uint32_t EF  = 7UL;
+				constexpr uint32_t ADD = 0UL;
+			}
+
+			namespace Mask
+			{
+				[[maybe_unused]] constexpr uint32_t EF  = (1UL << Position::EF);
+				[[maybe_unused]] constexpr uint32_t ADD = (0x7FUL << Position::ADD);
+			}
+		}
+
+		namespace BTABLE
+		{
+			namespace Position
+			{
+				constexpr uint32_t BTABLE = 3UL;
+			}
+
+			namespace Mask
+			{
+				[[maybe_unused]] constexpr uint32_t BTABLE = (0x1FFFUL << Position::BTABLE);
+			}
+		}
+
+		namespace LPMCSR
+		{
+			namespace Position
+			{
+				constexpr uint32_t BESL    = 4UL;
+				constexpr uint32_t REMWAKE = 3UL;
+				constexpr uint32_t LPMACK  = 1UL;
+				constexpr uint32_t LPMEN   = 0UL;
+			}
+
+			namespace Mask
+			{
+				[[maybe_unused]] constexpr uint32_t BESL    = (0x0FUL << Position::BESL);
+				[[maybe_unused]] constexpr uint32_t REMWAKE = (1UL << Position::REMWAKE);
+				[[maybe_unused]] constexpr uint32_t LPMACK  = (1UL << Position::LPMACK);
+				[[maybe_unused]] constexpr uint32_t LPMEN   = (1UL << Position::LPMEN);
+			}
+		}
+
+		namespace BCDR
+		{
+			namespace Position
+			{
+				constexpr uint32_t DPPU   = 15UL;
+				constexpr uint32_t PS2DET = 7UL;
+				constexpr uint32_t SDET   = 6UL;
+				constexpr uint32_t PDET   = 5UL;
+				constexpr uint32_t DCDET  = 4UL;
+				constexpr uint32_t SDEN   = 3UL;
+				constexpr uint32_t PDEN   = 2UL;
+				constexpr uint32_t DCDEN  = 1UL;
+				constexpr uint32_t BCDEN  = 0UL;
+			}
+
+			namespace Mask
+			{
+				[[maybe_unused]] constexpr uint32_t DPPU   = (1UL << Position::DPPU);
+				[[maybe_unused]] constexpr uint32_t PS2DET = (1UL << Position::PS2DET);
+				[[maybe_unused]] constexpr uint32_t SDET   = (1UL << Position::SDET);
+				[[maybe_unused]] constexpr uint32_t PDET   = (1UL << Position::PDET);
+				[[maybe_unused]] constexpr uint32_t DCDET  = (1UL << Position::DCDET);
+				[[maybe_unused]] constexpr uint32_t SDEN   = (1UL << Position::SDEN);
+				[[maybe_unused]] constexpr uint32_t PDEN   = (1UL << Position::PDEN);
+				[[maybe_unused]] constexpr uint32_t DCDEN  = (1UL << Position::DCDEN);
+				[[maybe_unused]] constexpr uint32_t BCDEN  = (1UL << Position::BCDEN);
+			}
+		}
+
+		namespace EPnR
+		{
+			namespace Position
+			{
+				constexpr uint32_t CTR_RX  = 15UL;
+				constexpr uint32_t DTOG_RX = 14UL;
+				constexpr uint32_t STAT_RX = 12UL;
+				constexpr uint32_t SETUP   = 11UL;
+				constexpr uint32_t EP_TYPE = 9UL;
+				constexpr uint32_t EP_KIND = 8UL;
+				constexpr uint32_t CTR_TX  = 7UL;
+				constexpr uint32_t DTOG_TX = 6UL;
+				constexpr uint32_t STAT_TX = 4UL;
+				constexpr uint32_t EA      = 0UL;
+			}
+
+			namespace Mask
+			{
+				[[maybe_unused]] constexpr uint32_t CTR_RX  = (1UL << Position::CTR_RX);
+				[[maybe_unused]] constexpr uint32_t DTOG_RX = (1UL << Position::DTOG_RX);
+				[[maybe_unused]] constexpr uint32_t STAT_RX = (3UL << Position::STAT_RX);
+				[[maybe_unused]] constexpr uint32_t SETUP   = (1UL << Position::SETUP);
+				[[maybe_unused]] constexpr uint32_t EP_TYPE = (3UL << Position::EP_TYPE);
+				[[maybe_unused]] constexpr uint32_t EP_KIND = (1UL << Position::EP_KIND);
+				[[maybe_unused]] constexpr uint32_t CTR_TX  = (1UL << Position::CTR_TX);
+				[[maybe_unused]] constexpr uint32_t DTOG_TX = (1UL << Position::DTOG_TX);
+				[[maybe_unused]] constexpr uint32_t STAT_TX = (3UL << Position::STAT_TX);
+				[[maybe_unused]] constexpr uint32_t EA      = (0x0FUL << Position::EA);
+			}
+		}
+	}
+
   constexpr uint32_t USBBaseAddress = 0x40005C00U;
   constexpr uint32_t CommonRegistersOffset = 0x40U;
   
@@ -42,59 +245,29 @@ namespace F072
   
   CommonRegisters volatile * const USBRegisters = reinterpret_cast<CommonRegisters *>(USBBaseAddress + CommonRegistersOffset);
   EndpointRegisters volatile * const USBEndpointRegisters = reinterpret_cast<EndpointRegisters *>(USBBaseAddress);
-  
-  namespace ISTR
-  {
-	  constexpr uint32_t CTRPos = 15U;
-	  constexpr uint32_t PMAOVRPos = 14U;
-	  constexpr uint32_t ERRPos = 13U;
-	  constexpr uint32_t WKUPPos = 12U;
-	  constexpr uint32_t SUSPPos = 11U;
-	  constexpr uint32_t RESETPos = 10U;
-	  constexpr uint32_t SOFPos = 9U;
-	  constexpr uint32_t ESOFPos = 8U;
-	  constexpr uint32_t L1REQPos = 7U;
-	  constexpr uint32_t DIRPos = 4U;
-	  constexpr uint32_t EP_IDPos = 0U;
-	  constexpr uint32_t EP_IDMask = 0x0FU;
-  }
+
   
   namespace Endpoint 
   {
-	namespace USBEPxR
-	{
-		constexpr uint32_t EAPos = 0U;
-		constexpr uint32_t EAMask = 0xFU;
-		constexpr uint32_t STAT_TXPos = 4U;
-		constexpr uint32_t STAT_TXMask = (3U << STAT_TXPos);
-		constexpr uint32_t DTOG_TXPos = 6U;
-		constexpr uint32_t CTR_TXPos = 7U;
-		constexpr uint32_t EP_KINDPos = 8U;
-		constexpr uint32_t EP_TYPEPos = 9U;
-		constexpr uint32_t EP_TYPEMask = (3u << EP_TYPEPos);
-		constexpr uint32_t SETUPPos = 11U;
-		constexpr uint32_t STAT_RXPos = 12U;
-		constexpr uint32_t STAT_RXMask = (3U << STAT_RXPos);
-		constexpr uint32_t DTOG_RXPos = 14U;
-		constexpr uint32_t CTR_RXPos = 15U;
-	}
-	  
 	void SetAddress(uint8_t endpoint, uint8_t address)
 	{
 		uint32_t epVal = USBEndpointRegisters->EPxR[endpoint];
 		//clear toggle bits
-		epVal &= ~( (1 << USBEPxR::DTOG_RXPos) |
-					USBEPxR::STAT_RXMask       |
-					(1 << USBEPxR::SETUPPos)   |
-					(1 << USBEPxR::DTOG_TXPos) |
-					USBEPxR::STAT_TXMask);
+		constexpr uint32_t toggleBitsMask = F072::Registers::EPnR::Mask::DTOG_RX |
+											F072::Registers::EPnR::Mask::STAT_RX |
+											F072::Registers::EPnR::Mask::SETUP   |
+											F072::Registers::EPnR::Mask::DTOG_TX |
+											F072::Registers::EPnR::Mask::STAT_TX;
+		epVal &= ~toggleBitsMask;
+
 		//clear address bits
-		epVal &= ~USBEPxR::EAMask;
+		epVal &= ~F072::Registers::EPnR::Mask::EA;
 		//set write 0 to clear bits
-		epVal |= (1 << USBEPxR::CTR_RXPos) |
-				 (1 << USBEPxR::CTR_TXPos);
+		constexpr uint32_t write0ToClearMask = F072::Registers::EPnR::Mask::CTR_RX |
+											   F072::Registers::EPnR::Mask::CTR_TX;
+		epVal |= write0ToClearMask;
 		//set address
-		epVal |= (address << USBEPxR::EAPos);
+		epVal |= (address << F072::Registers::EPnR::Position::EA);
 		
 		USBEndpointRegisters->EPxR[endpoint] = epVal;
 	}
@@ -102,22 +275,24 @@ namespace F072
 	void SetTxState(uint8_t endpoint, EPTxState state)
 	{
 		uint32_t epVal = USBEndpointRegisters->EPxR[endpoint];
-		const uint32_t currentState = (epVal & USBEPxR::STAT_TXMask) >> USBEPxR::STAT_TXPos;
+		const uint32_t currentState = 
+				((epVal & F072::Registers::EPnR::Mask::STAT_TX) >> F072::Registers::EPnR::Position::STAT_TX);
 		uint32_t newState = static_cast<uint32_t>(state) ^ currentState;
-		newState <<= USBEPxR::STAT_TXPos;
+		newState <<= F072::Registers::EPnR::Position::STAT_TX;
 		
-		//clear toggle bits
-		epVal &= ~( (1 << USBEPxR::DTOG_RXPos) |
-					USBEPxR::STAT_RXMask       |
-					(1 << USBEPxR::SETUPPos)   |
-					(1 << USBEPxR::DTOG_TXPos) |
-					USBEPxR::STAT_TXMask);
+		constexpr uint32_t toggleBitsMask = F072::Registers::EPnR::Mask::DTOG_RX |
+											F072::Registers::EPnR::Mask::STAT_RX |
+											F072::Registers::EPnR::Mask::SETUP   |
+											F072::Registers::EPnR::Mask::DTOG_TX |
+											F072::Registers::EPnR::Mask::STAT_TX;
+		epVal &= ~toggleBitsMask;
 		
 		//set write 0 to clear bits
-		epVal |= (1 << USBEPxR::CTR_RXPos) |
-				 (1 << USBEPxR::CTR_TXPos);
+		constexpr uint32_t write0ToClearMask = F072::Registers::EPnR::Mask::CTR_RX |
+											   F072::Registers::EPnR::Mask::CTR_TX;
+		epVal |= write0ToClearMask;
 		
-		epVal |= newState;
+		epVal |= newState; //todo this looks wrong ^= new state? or mask out state and or in
 		
 		USBEndpointRegisters->EPxR[endpoint] = epVal;
 	}
@@ -125,20 +300,22 @@ namespace F072
 	void SetRxState(uint8_t endpoint, EPRxState state)
 	{
 		uint32_t epVal = USBEndpointRegisters->EPxR[endpoint];
-		const uint32_t currentState = (epVal & USBEPxR::STAT_RXMask) >> USBEPxR::STAT_RXPos;
+		const uint32_t currentState = 
+			((epVal & F072::Registers::EPnR::Mask::STAT_RX) >> F072::Registers::EPnR::Position::STAT_RX);
 		uint32_t newState = static_cast<uint32_t>(state) ^ currentState;
-		newState <<= USBEPxR::STAT_RXPos;
+		newState <<= F072::Registers::EPnR::Position::STAT_RX;
 		
-		//clear toggle bits
-		epVal &= ~( (1 << USBEPxR::DTOG_RXPos) |
-					USBEPxR::STAT_RXMask       |
-					(1 << USBEPxR::SETUPPos)   |
-					(1 << USBEPxR::DTOG_TXPos) |
-					USBEPxR::STAT_TXMask);
+		constexpr uint32_t toggleBitsMask = F072::Registers::EPnR::Mask::DTOG_RX |
+											F072::Registers::EPnR::Mask::STAT_RX |
+											F072::Registers::EPnR::Mask::SETUP   |
+											F072::Registers::EPnR::Mask::DTOG_TX |
+											F072::Registers::EPnR::Mask::STAT_TX;
+		epVal &= ~toggleBitsMask;
 		
 		//set write 0 to clear bits
-		epVal |= (1 << USBEPxR::CTR_RXPos) |
-				 (1 << USBEPxR::CTR_TXPos);
+		constexpr uint32_t write0ToClearMask = F072::Registers::EPnR::Mask::CTR_RX |
+											   F072::Registers::EPnR::Mask::CTR_TX;
+		epVal |= write0ToClearMask;
 		
 		epVal |= newState;
 		
@@ -147,22 +324,23 @@ namespace F072
 	
 	void SetEPType(uint8_t endpoint, EPType type)
 	{
-		const uint32_t epTypeValue = static_cast<uint32_t>(type) << USBEPxR::EP_TYPEPos;
+		const uint32_t epTypeValue = static_cast<uint32_t>(type) << F072::Registers::EPnR::Position::EP_TYPE;
 		uint32_t epVal = USBEndpointRegisters->EPxR[endpoint];
 		
-		//clear toggle bits
-		epVal &= ~( (1 << USBEPxR::DTOG_RXPos) |
-					USBEPxR::STAT_RXMask       |
-					(1 << USBEPxR::SETUPPos)   |
-					(1 << USBEPxR::DTOG_TXPos) |
-					USBEPxR::STAT_TXMask);
+		constexpr uint32_t toggleBitsMask = F072::Registers::EPnR::Mask::DTOG_RX |
+											F072::Registers::EPnR::Mask::STAT_RX |
+											F072::Registers::EPnR::Mask::SETUP   |
+											F072::Registers::EPnR::Mask::DTOG_TX |
+											F072::Registers::EPnR::Mask::STAT_TX;
+		epVal &= ~toggleBitsMask;
 		
 		//set write 0 to clear bits
-		epVal |= (1 << USBEPxR::CTR_RXPos) |
-				 (1 << USBEPxR::CTR_TXPos);
+		constexpr uint32_t write0ToClearMask = F072::Registers::EPnR::Mask::CTR_RX |
+											   F072::Registers::EPnR::Mask::CTR_TX;
+		epVal |= write0ToClearMask;
 		
 		//clear current type bits
-		epVal &= ~USBEPxR::EP_TYPEMask;
+		epVal &= ~F072::Registers::EPnR::Mask::EP_TYPE;
 		epVal |= epTypeValue;
 		
 		USBEndpointRegisters->EPxR[endpoint] = epVal;
@@ -170,31 +348,32 @@ namespace F072
 	
 	bool CorrectReceptionTransfer(uint8_t endpoint)
 	{
-		return ((USBEndpointRegisters->EPxR[endpoint] & (1 << USBEPxR::CTR_RXPos)) == (1 << USBEPxR::CTR_RXPos));
+		return (F072::Registers::EPnR::Mask::CTR_RX == (USBEndpointRegisters->EPxR[endpoint] & F072::Registers::EPnR::Mask::CTR_RX));
 	}
 	
 	bool CorrectTransmissionTransfer(uint8_t endpoint)
 	{
-		return ((USBEndpointRegisters->EPxR[endpoint] & (1 << USBEPxR::CTR_RXPos)) == (1 << USBEPxR::CTR_RXPos));
+		return (F072::Registers::EPnR::Mask::CTR_TX == (USBEndpointRegisters->EPxR[endpoint] & F072::Registers::EPnR::Mask::CTR_TX));
 	}
 	
 	void ClearCorrectReceptionTransfer(uint8_t endpoint)
 	{
 		uint32_t epVal = USBEndpointRegisters->EPxR[endpoint];
 		
-		//clear toggle bits
-		epVal &= ~( (1 << USBEPxR::DTOG_RXPos) |
-					USBEPxR::STAT_RXMask       |
-					(1 << USBEPxR::SETUPPos)   |
-					(1 << USBEPxR::DTOG_TXPos) |
-					USBEPxR::STAT_TXMask);
+		constexpr uint32_t toggleBitsMask = F072::Registers::EPnR::Mask::DTOG_RX |
+											F072::Registers::EPnR::Mask::STAT_RX |
+											F072::Registers::EPnR::Mask::SETUP   |
+											F072::Registers::EPnR::Mask::DTOG_TX |
+											F072::Registers::EPnR::Mask::STAT_TX;
+		epVal &= ~toggleBitsMask;
 		
 		//set write 0 to clear bits
-		epVal |= (1 << USBEPxR::CTR_RXPos) |
-				 (1 << USBEPxR::CTR_TXPos);
+		constexpr uint32_t write0ToClearMask = F072::Registers::EPnR::Mask::CTR_RX |
+											   F072::Registers::EPnR::Mask::CTR_TX;
+		epVal |= write0ToClearMask;
 		
 		//clear ctr rx
-		epVal &= ~(1 << USBEPxR::CTR_RXPos);
+		epVal &= ~F072::Registers::EPnR::Mask::CTR_RX;
 		USBEndpointRegisters->EPxR[endpoint] = epVal;
 	}
 	
@@ -202,19 +381,20 @@ namespace F072
 	{
 		uint32_t epVal = USBEndpointRegisters->EPxR[endpoint];
 		
-		//clear toggle bits
-		epVal &= ~( (1 << USBEPxR::DTOG_RXPos) |
-					USBEPxR::STAT_RXMask       |
-					(1 << USBEPxR::SETUPPos)   |
-					(1 << USBEPxR::DTOG_TXPos) |
-					USBEPxR::STAT_TXMask);
+		constexpr uint32_t toggleBitsMask = F072::Registers::EPnR::Mask::DTOG_RX |
+											F072::Registers::EPnR::Mask::STAT_RX |
+											F072::Registers::EPnR::Mask::SETUP   |
+											F072::Registers::EPnR::Mask::DTOG_TX |
+											F072::Registers::EPnR::Mask::STAT_TX;
+		epVal &= ~toggleBitsMask;
 		
 		//set write 0 to clear bits
-		epVal |= (1 << USBEPxR::CTR_RXPos) |
-				 (1 << USBEPxR::CTR_TXPos);
+		constexpr uint32_t write0ToClearMask = F072::Registers::EPnR::Mask::CTR_RX |
+											   F072::Registers::EPnR::Mask::CTR_TX;
+		epVal |= write0ToClearMask;
 		
 		//clear ctr rx
-		epVal &= ~(1 << USBEPxR::CTR_TXPos);
+		epVal &= ~F072::Registers::EPnR::Mask::CTR_TX;
 		USBEndpointRegisters->EPxR[endpoint] = epVal;
 	}
 	
@@ -488,13 +668,13 @@ void F0USB::RegisterEndpoint(uint8_t endpointNumber, EPType type, uint16_t inSiz
 
 void F0USB::Interrupt()
 {
-	if((F072::USBRegisters->ISTR & (1 << F072::ISTR::RESETPos)) == (1 << F072::ISTR::RESETPos))
+	if(F072::Registers::ISTR::Mask::RESET == (F072::USBRegisters->ISTR & F072::Registers::ISTR::Mask::RESET))
 	{
 		ResetIRQ();
-		F072::USBRegisters->ISTR = 0xFFFF & ~(1 << F072::ISTR::RESETPos);
+		F072::USBRegisters->ISTR = 0xFFFF & ~F072::Registers::ISTR::Mask::RESET;
 	}
 	
-	if((F072::USBRegisters->ISTR & (1 << F072::ISTR::CTRPos)) == (1 << F072::ISTR::CTRPos))
+	if(F072::Registers::ISTR::Mask::CTR == (F072::USBRegisters->ISTR & F072::Registers::ISTR::Mask::CTR))
 	{
 		CorrectTransferIRQ();
 	}
@@ -519,8 +699,8 @@ void F0USB::ResetIRQ()
 
 void F0USB::CorrectTransferIRQ()
 {
-	const uint8_t hardwareEndpoint = static_cast<uint8_t>(F072::USBRegisters->ISTR & F072::ISTR::EP_IDMask);
-	if((F072::USBEndpointRegisters->EPxR[hardwareEndpoint] & (1 << F072::Endpoint::USBEPxR::CTR_RXPos)) == (1 << F072::Endpoint::USBEPxR::CTR_RXPos))
+	const uint8_t hardwareEndpoint = static_cast<uint8_t>(F072::USBRegisters->ISTR & F072::Registers::ISTR::Mask::EP_ID);
+	if(F072::Registers::EPnR::Mask::CTR_RX == (F072::USBEndpointRegisters->EPxR[hardwareEndpoint] & F072::Registers::EPnR::Mask::CTR_RX))
 	{
 		const uint16_t bytesReceived = F072::BufferDescriptor::DescriptorTable->Endpoint[hardwareEndpoint].COUNT_RX & 0x01FFU;
 		uint8_t volatile * const packetMemory = reinterpret_cast<uint8_t *>(F072::BufferDescriptor::DescriptorTable->Endpoint[hardwareEndpoint].ADDR_RX + 0x40006000U);
@@ -543,7 +723,7 @@ void F0USB::CorrectTransferIRQ()
 		F072::Endpoint::SetRxState(hardwareEndpoint, EPRxState::Valid);
 	}
 	
-	if((F072::USBEndpointRegisters->EPxR[hardwareEndpoint] & (1 << F072::Endpoint::USBEPxR::CTR_TXPos)) == (1 << F072::Endpoint::USBEPxR::CTR_TXPos))
+	if(F072::Registers::EPnR::Mask::CTR_TX == (F072::USBEndpointRegisters->EPxR[hardwareEndpoint] & F072::Registers::EPnR::Mask::CTR_TX))
 	{
 		if(0U == hardwareEndpoint)
 		{
