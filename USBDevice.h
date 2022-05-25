@@ -31,6 +31,9 @@ public:
     virtual void DataOut(uint8_t endpoint, uint16_t byteCount) = 0;
     
     virtual void SOF() = 0;
+		
+	virtual bool SetConfiguration(uint16_t configuration) = 0;
+	virtual bool SetInterface(uint16_t interface, uint16_t alternateSetting) = 0;
 
     //getters
     virtual const uint8_t * GetDeviceDescriptor(uint16_t *length) = 0;

@@ -37,6 +37,10 @@ void USBDevice::SetupPacketRx(const SetupPacket &setupPacket)
 			else if(((setupPacket.wValue & 0xFF00) >> 8U) == DescriptorTypes::CONFIGURATION)
 			{
 				mEP0InTransaction.mData = GetConfigurationDescriptor(&mEP0InTransaction.mLength);
+				if(mEP0InTransaction.mLength > setupPacket.wLength)
+				{
+					mEP0InTransaction.mLength = setupPacket.wLength;
+				}
 				if(mEP0InTransaction.mLength > 64U)
 				{
 					mUSB.TxData(0, mEP0InTransaction.mData, 64U);
@@ -52,10 +56,26 @@ void USBDevice::SetupPacketRx(const SetupPacket &setupPacket)
 		case StandardRequestCodes::GET_CONFIGURATION:
 			break;
 		case StandardRequestCodes::SET_CONFIGURATION:
+			if(SetConfiguration(setupPacket.wValue))
+			{
+				mUSB.TxData(0, nullptr, 0);
+			}
+			else
+			{
+				//todo stall
+			}
 			break;
 		case StandardRequestCodes::GET_INTERFACE:
 			break;
 		case StandardRequestCodes::SET_INTERFACE:
+			if(SetInterface(setupPacket.wIndex, setupPacket.wValue))
+			{
+				mUSB.TxData(0, nullptr, 0);
+			}
+			else
+			{
+				
+			}
 			break;
 		case StandardRequestCodes::SYNCH_FRAME:
 			break;
