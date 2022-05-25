@@ -402,25 +402,6 @@ namespace F072
     
   namespace Control
   {	  
-	  namespace CNTR
-	  {
-		  constexpr uint32_t FRESPos = 0U;
-		  constexpr uint32_t PDWNPos = 1U;
-		  constexpr uint32_t LP_MODEPos = 2U;
-		  constexpr uint32_t FSUSPPos = 3U;
-		  constexpr uint32_t RESUMEPos = 4U;
-		  constexpr uint32_t L1RESUMEPos = 5U;
-		  constexpr uint32_t L1REQMPos = 7U;
-		  constexpr uint32_t ESOFMPos = 8U;
-		  constexpr uint32_t SOFMPos = 9U;
-		  constexpr uint32_t RESETMPos = 10U;
-		  constexpr uint32_t SUSPMPos = 11U;
-		  constexpr uint32_t WKUPMPos = 12U;
-		  constexpr uint32_t ERRMPos = 13U;
-		  constexpr uint32_t PMAOVRMPos = 14U;
-		  constexpr uint32_t CTRMPos = 15U;
-	  }
-	  
 	  enum class Interrupt
 	  {
 		  CorrectTransfer,
@@ -436,22 +417,22 @@ namespace F072
 	  
 	  void PowerDown()
 	  {
-		  USBRegisters->CNTR |= (1 << CNTR::PDWNPos);
+		  USBRegisters->CNTR |= F072::Registers::CNTR::Mask::PDWN;
 	  }
 	  
 	  void PowerUp()
 	  {
-		  USBRegisters->CNTR &= ~(1 << CNTR::PDWNPos);
+		  USBRegisters->CNTR &= ~F072::Registers::CNTR::Mask::PDWN;
 	  }
 	  
 	  void ForceReset()
 	  {
-		  USBRegisters->CNTR |= (1 << CNTR::FRESPos);
+		  USBRegisters->CNTR |= F072::Registers::CNTR::Mask::FRES;
 	  }
 	  
 	  void ClearReset()
 	  {
-		  USBRegisters->CNTR &= ~(1 << CNTR::FRESPos);
+		  USBRegisters->CNTR &= ~F072::Registers::CNTR::Mask::FRES;
 	  }
 	  
 	  void EnableInterrupt(Interrupt type)
@@ -460,31 +441,31 @@ namespace F072
 		  switch(type)
 		  {
 			  case Interrupt::CorrectTransfer:
-				registerValue |= (1 << CNTR::CTRMPos);
+				registerValue |= F072::Registers::CNTR::Mask::CTRM;
 				break;
 			  case Interrupt::PMAOverUnderRun:
-				registerValue |= (1 << CNTR::PMAOVRMPos);
+				registerValue |= F072::Registers::CNTR::Mask::PMAOVRM;
 				break;
 			  case Interrupt::Error:
-				registerValue |= (1 << CNTR::ERRMPos);
+				registerValue |= F072::Registers::CNTR::Mask::ERRM;
 				break;
 			  case Interrupt::Wakeup:
-				registerValue |= (1 << CNTR::WKUPMPos);
+				registerValue |= F072::Registers::CNTR::Mask::WKUPM;
 				break;
 			  case Interrupt::Suspend:
-				registerValue |= (1 << CNTR::SUSPMPos);
+				registerValue |= F072::Registers::CNTR::Mask::SUSPM;
 				break;
 			  case Interrupt::Reset:
-				registerValue |= (1 << CNTR::RESETMPos);
+				registerValue |= F072::Registers::CNTR::Mask::RESETM;
 				break;
 			  case Interrupt::StartOfFrame:
-				registerValue |= (1 << CNTR::SOFMPos);
+				registerValue |= F072::Registers::CNTR::Mask::SOFM;
 				break;
 			  case Interrupt::ExpectedStartOfFrame:
-				registerValue |= (1 << CNTR::ESOFMPos);
+				registerValue |= F072::Registers::CNTR::Mask::ESOFM;
 				break;
 			  case Interrupt::L1Request:
-				registerValue |= (1 << CNTR::L1REQMPos);
+				registerValue |= F072::Registers::CNTR::Mask::L1REQM;
 				break;
 			  default:
 				  break;
@@ -498,31 +479,31 @@ namespace F072
 		  switch(type)
 		  {
 			  case Interrupt::CorrectTransfer:
-				registerValue &= ~(1 << CNTR::CTRMPos);
+				registerValue &= ~F072::Registers::CNTR::Mask::CTRM;
 				break;
 			  case Interrupt::PMAOverUnderRun:
-				registerValue &= ~(1 << CNTR::PMAOVRMPos);
+				registerValue &= ~F072::Registers::CNTR::Mask::PMAOVRM;
 				break;
 			  case Interrupt::Error:
-				registerValue &= ~(1 << CNTR::ERRMPos);
+				registerValue &= ~F072::Registers::CNTR::Mask::ERRM;
 				break;
 			  case Interrupt::Wakeup:
-				registerValue &= ~(1 << CNTR::WKUPMPos);
+				registerValue &= ~F072::Registers::CNTR::Mask::WKUPM;
 				break;
 			  case Interrupt::Suspend:
-				registerValue &= ~(1 << CNTR::SUSPMPos);
+				registerValue &= ~F072::Registers::CNTR::Mask::SUSPM;
 				break;
 			  case Interrupt::Reset:
-				registerValue &= ~(1 << CNTR::RESETMPos);
+				registerValue &= ~F072::Registers::CNTR::Mask::RESETM;
 				break;
 			  case Interrupt::StartOfFrame:
-				registerValue &= ~(1 << CNTR::SOFMPos);
+				registerValue &= ~F072::Registers::CNTR::Mask::SOFM;
 				break;
 			  case Interrupt::ExpectedStartOfFrame:
-				registerValue &= ~(1 << CNTR::ESOFMPos);
+				registerValue &= ~F072::Registers::CNTR::Mask::ESOFM;
 				break;
 			  case Interrupt::L1Request:
-				registerValue &= ~(1 << CNTR::L1REQMPos);
+				registerValue &= ~F072::Registers::CNTR::Mask::L1REQM;
 				break;
 			  default:
 				  break;

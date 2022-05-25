@@ -31,7 +31,7 @@ void USBDevice::SetupPacketRx(const SetupPacket &setupPacket)
 			if(((setupPacket.wValue & 0xFF00) >> 8U) == DescriptorTypes::DEVICE)
 			{
 				uint16_t descriptorLength;
-				uint8_t *deviceDesc = GetDeviceDescriptor(&descriptorLength);
+				const uint8_t *deviceDesc = GetDeviceDescriptor(&descriptorLength);
 				mUSB.TxData(0, deviceDesc, descriptorLength);
 			}
 			else if(((setupPacket.wValue & 0xFF00) >> 8U) == DescriptorTypes::CONFIGURATION)

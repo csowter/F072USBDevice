@@ -33,8 +33,8 @@ public:
     virtual void SOF() = 0;
 
     //getters
-    virtual uint8_t *GetDeviceDescriptor(uint16_t *length) = 0;
-    virtual uint8_t *GetConfigurationDescriptor(uint16_t *length) = 0;
+    virtual const uint8_t * GetDeviceDescriptor(uint16_t *length) = 0;
+    virtual const uint8_t * GetConfigurationDescriptor(uint16_t *length) = 0;
 
 private:
 	F0USB &mUSB;
