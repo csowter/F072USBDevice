@@ -227,7 +227,7 @@ namespace F072
   constexpr uint32_t USBBaseAddress = 0x40005C00U;
   constexpr uint32_t CommonRegistersOffset = 0x40U;
   
-  __packed struct CommonRegisters
+  struct __attribute__((packed, aligned(1))) CommonRegisters 
   {
 	  volatile uint32_t CNTR;
 	  volatile uint32_t ISTR;
@@ -238,7 +238,7 @@ namespace F072
 	  volatile uint32_t BCDR;
   };
   
-  __packed struct EndpointRegisters
+  struct __attribute__((packed, aligned(1))) EndpointRegisters 
   {
 	  volatile uint32_t EPxR[8];
   };
@@ -526,7 +526,7 @@ namespace F072
 	  }
 	  uint16_t NextFreeBufferOffset = EndpointDescriptorTableLength + (2 * Ep0DataLength);
 
-	  __packed struct EndpointDescriptor
+	  struct __attribute__((packed, aligned(1))) EndpointDescriptor 
 	  {
 		  volatile uint16_t ADDR_TX;
 		  volatile uint16_t COUNT_TX;
@@ -534,7 +534,7 @@ namespace F072
 		  volatile uint16_t COUNT_RX;
 	  };
 	  
-	  __packed struct Table
+	  struct __attribute__((packed, aligned(1))) Table
 	  {
 		  volatile EndpointDescriptor Endpoint[8];
 	  };
@@ -577,6 +577,8 @@ namespace F072
 				DescriptorTable->Endpoint[endpoint].COUNT_RX = numberOfBlocks;
 			}
 		}
+		
+		return true;
 	  }
   }
 }
