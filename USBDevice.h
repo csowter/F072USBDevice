@@ -38,9 +38,11 @@ public:
     //getters
     virtual const uint8_t * GetDeviceDescriptor(uint16_t *length) = 0;
     virtual const uint8_t * GetConfigurationDescriptor(uint16_t *length) = 0;
+	virtual const uint8_t * GetStringDescriptor(uint8_t stringID, uint16_t languageID, uint16_t *length) = 0;
 
-private:
+protected:
 	F0USB &mUSB;
+private:
 	SetupPacket mLastRxSetupPacket;
 	InTransaction mEP0InTransaction;
 };

@@ -50,6 +50,22 @@ void USBDevice::SetupPacketRx(const SetupPacket &setupPacket)
 					mEP0InTransaction.mPosition = mEP0InTransaction.mLength;
 				}
 			}
+			else if(((setupPacket.wValue & 0xFF00) >> 8U) == DescriptorTypes::STRING)
+			{
+				mEP0InTransaction.mData = GetStringDescriptor(setupPacket.wValue & 0xFF, setupPacket.wIndex, &mEP0InTransaction.mLength);
+				if(mEP0InTransaction.mLength > setupPacket.wLength)
+				{
+					mEP0InTransaction.mLength = setupPacket.wLength;
+				}
+				if(mEP0InTransaction.mLength > 64U)
+				{
+					mUSB.TxData(0, mEP0InTransaction.mData, 64U);
+					mEP0InTransaction.mPosition = 64U;
+				} else {
+					mUSB.TxData(0, mEP0InTransaction.mData, mEP0InTransaction.mLength);
+					mEP0InTransaction.mPosition = mEP0InTransaction.mLength;
+				}
+			}
 			break;
 		case StandardRequestCodes::SET_DESCRIPTOR:
 			break;

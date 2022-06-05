@@ -645,6 +645,7 @@ void F0USB::RegisterEndpoint(uint8_t endpointNumber, EPType type, uint16_t inSiz
 	}
 	
 	F072::Endpoint::SetEPType(maskedEndpoint, type);
+	F072::Endpoint::SetAddress(maskedEndpoint, maskedEndpoint);
 }
 
 void F0USB::Interrupt()
@@ -733,6 +734,18 @@ void F0USB::TxData(uint8_t endpointNumber, const uint8_t *data, uint16_t length)
 void F0USB::SetDeviceAddress(uint8_t address)
 {
 	F072::USBRegisters->DADDR |= address;
+}
+
+void F0USB::SetEndpointValid(uint8_t ep)
+{
+	if((ep & 0x80) == 0x80)
+	{
+		F072::Endpoint::SetTxState(ep, EPTxState::Valid);
+	}
+	else
+	{
+		F072::Endpoint::SetRxState(ep, EPRxState::Valid);
+	}
 }
 
 extern "C" void USB_IRQHandler()

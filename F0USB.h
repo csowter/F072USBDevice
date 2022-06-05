@@ -28,6 +28,7 @@ public:
 	void RegisterEndpoint(uint8_t endpointNumber, EPType type, uint16_t inSize, uint16_t outSize, uint8_t *outRxBuffer);
 	void TxData(uint8_t endpointNumber, const uint8_t *data, uint16_t length);
 	void SetDeviceAddress(uint8_t address);
+	void SetEndpointValid(uint8_t ep);
 
 private:
 	void InitialiseHardware();
